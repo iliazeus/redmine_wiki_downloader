@@ -1,20 +1,28 @@
 #!/usr/bin/env python3
 
-import os
-from dotenv import load_dotenv
-import requests
-import json
-import csv
-import re
-import subprocess
-import sys
 import argparse
+import getpass
+import json
+import os
+import re
+import requests
+import sys
+import tomllib
 
-# Set globals
-load_dotenv(".env")
+
+with open("config.toml", "rb") as f:
+    config = tomllib.load(f)
+
+url = config["redmine"]["url"]
+print("Redmine URL:", url)
+
+user = config["redmine"].get("user") or getpass.getuser()
+print("Redmine user:", user)
+
+password = config["redmine"].get("password") or getpass.getpass("Redmine password: ")
+
 base_dir = os.getcwd()
-url = os.getenv("REDMINE_URL")
-user, password = os.getenv("REDMINE_USER"), os.getenv("REDMINE_PASSWORD")
+
 
 def get_data_from_endpoint(target_url):
     response = requests.get(target_url, auth=(user, password))
